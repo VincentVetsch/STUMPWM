@@ -1,0 +1,27 @@
+troff: fatal error: can't open `my-stumpwm-man.1': No such file or directory
+Use of uninitialized value $fld in concatenation (.) or string at /usr/bin/gropdf line 1923.
+1 0 obj 
+endobj
+1 0 obj << /CreationDate (D:20181102175240-5'00')
+/Creator (groff version 1.22.3)
+/ModDate (D:20181102175240-5'00')
+/Producer (gropdf version 1.22.3)
+>>
+endobj
+Use of uninitialized value $fld in concatenation (.) or string at /usr/bin/gropdf line 1923.
+2 0 obj 
+endobj
+xref
+0 2
+0000000000 65535 f 
+0000000016 00000 n 
+0000000176 00000 n 
+trailer
+<<
+/Info 1 0 R 
+/Root 1 0 R
+/Size 2
+>>
+startxref
+192
+%%EOF

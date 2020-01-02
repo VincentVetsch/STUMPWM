@@ -1,0 +1,11 @@
+;; Start up services
+(run-shell-command "xrdb ~/.Xresources")
+(run-shell-command "xsetroot -cursor_name left_ptr")
+(run-shell-command "~/.screenlayout/default.sh")
+(run-shell-command "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
+(run-shell-command "feh --bg-scale ~/Pictures/14.jpg")
+;(run-shell-command "feh --bg-scale ~/Pictures/img_92031.jpg")
+(run-shell-command "pkill compton && pkill flashfocus")
+(run-shell-command "compton -b -f --config ~/.config/compton.conf")
+(run-shell-command "flashfocus")
+(emacs)

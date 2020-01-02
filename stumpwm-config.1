@@ -1,0 +1,445 @@
+.\" Copyright (C), 2018  Vince
+.\" You may distribute this file under the terms of the GNU Free
+.\" Documentation License.
+.\".so /home/vince/Documents/groff-macros/bullet.macro
+.TH "My StumpWM Config" 1 2018-10-28 
+.SH NAME
+.NM
+My StumpWM Config - Variables, Macros, Functions, and Commands for My Personnal StumpWM Configuration
+.SH DEPENDANCIES
+.PP
+(ql:quickload :stumpwm)
+.PP
+(ql:quickload :str)
+.PP
+(ql:quickload :ip-interfaces)
+.PP
+(ql:quickload :cl-utilities)
+.PP
+(ql:quickload :clx-truetype)
+.PP
+(ql:quickload :clx)
+.PP
+(ql:quickload :xembed)
+.PP
+(ql:quickload :anaphora)
+.PP
+(ql:quickload :serapeum)
+.PP
+(ql:quickload :alexandria)
+.PP
+(ql:quickload :swank)
+.SH DESCRIPTION
+.PP
+The following Variables, Macros, Functions, and Commands are additions to the StumpWM base.  They are designed to add new functionallity and features to the environment.  Everything starts from init.lisp which loads up all of the functions and commands.  
+.PP
+Currently the goal is to have a stable Desktop Environment on par with XFCE or Mate, but without the overhead envolved.  I want to have an environment without clutter with both automatic tiling, manual tiling and floating window management.  Also, I want terminal as well as GUI application theming to be seemless, this may include a utility called pywall.  As this project progresses I want to develop applications that do not use bloated GTK or Qt GUI Libraries, instead use Xlibs and Wayland libs.
+.de BL
+.IP \(bu 2
+..
+.BL
+init.lisp contains mostly environment variables.
+.BL
+constants.lisp contains mostly constant variables.
+.BL
+macros.lisp contains syntax macros for making key bindings and window manipulation.
+.BL
+functions.lisp contains mostly helper functions for use in defcommand macros.  These functions are not interactive except through the defcommand macro in StumpWM.
+.BL
+commands.lisp contains user commands to interacte with the operating system and StumpWM.
+.BL
+key-maps.lisp contains all of the keys maps for StumpWM.
+.SH VARIABLES
+.br
+.B "Located in init.lisp"
+.BL
+(defvar *which-key-on* 0 "In the beginning which-key is off")
+.BL
+(defvar *swm-gaps-on* 0 "In the beginning swm-gaps is off")
+.BL
+(defvar *swank-on* 0 "In the beginning swank is off")
+.BL
+(defvar *terminal* "st" "The default Terminal Emulator.")
+.BL
+(defvar *browser* "firefox" "The Default web browser.")
+.BL
+(defparameter *hostname* (string-trim '(#\Newline) (run-shell-command "hostname" t)) "The host name of current machine.")
+.BL
+(defvar *home-dir* nil "The home Direcctory form Stumpmwm")
+.BL
+(defvar *stump-dir* nil "Stump Data directory")
+.BL
+(defvar *load-dir* nil "Load files")
+.BL
+(defvar *undo-data-dir* nil "Undo Directory")
+.BL
+(defvar *background-image-path* nil "Image directory.")
+.BL
+"Located in functions.lisp"
+.BL
+(defvar *internet-interface* (nth 1 (ip-interfaces:get-ip-interfaces)) "All applicable information on primary internet interface")
+.BL
+(defvar *all-internet-interfaces* (ip-interfaces:get-ip-interfaces) "All applicable informamtion on all internet interfaces")
+.BL
+(defvar *debug-restream* nil)
+.BL
+(defvar *debug-file* (data-dir-file "log" "lisp"))
+.BL
+(defvar *useless-gaps-size* 10)
+.BL
+(defvar *useless-gaps-on* nil)
+.BL
+"Located in commands.lisp"
+.BL
+(defvar *swap-selected-frame* nil "Swapping frames yeah!")
+.BL
+(defvar *home* (getenv "HOME") "THe home directory")
+.BL
+(defparameter *log-menu* '(("STUMP"
+                            ("stumpwm.log" "~var/log/stumpwm.log"))
+                           ("XORG"
+                            ("Xorg.0.log" "/var/log/Xorg.0.log"))
+                           ("Package Manager"
+                            ("pacman.log" "/var/log/pacman.log"))))
+.BL
+(defvar *gap-resize-increment* 1 "Number of pixels to increment by when interactively resizing gaps.")
+.br
+.B "Located in constants.lisp"
+.BL
+(define-constant +seconds/minute+ 60)
+.BL
+(define-constant +minutes/hour+ 60)
+.BL
+(define-constant +hours/day+ 24)
+.BL
+(define-constant +seconds/hour+ (* +seconds/minute+ +minutes/hour+))
+.BL
+(define-constant +seconds/day+ (* +seconds/hour+ +hours/day+))
+.BL
+(define-constant +minutes/day+ (* +minutes/hour+ +hours/day+))
+.BL
+(define-constant +days/week+ 7)
+.BL
+(define-constant +hours/week+ (* +hours/day+ +days/week+))
+.BL
+(define-constant +minutes/week+ (* +minutes/hour+ +hours/week+))
+.BL
+(define-constant +seconds/week+ (* +seconds/minute+ +minutes/week+))
+.BL
+(define-constant +day-names+ '("Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" "Sunday") :test #'equal)
+.BL
+(define-constant +day-names/short+ '("Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun") :test #'equal)
+.BL
+(define-constant +month-names+ '("January" "February" "March" "April" "May" "June" "July" "August"
+                                 "September" "October" "November" "December") :test #'equal)
+.BL
+(define-constant +month-names/short+ '("Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct"
+"Nov" "Dec") :test #'equal)
+.BL
+(define-constant +user-name+ "Vincent E Vetsch" :test #'equal)
+.BL
+(define-constant +user-address+ '("2436 APT #214 North Nye AVE" "Fremont" "NE" "68025") :test #'equal)
+
+.SH MACROS
+\- (defmacro while (predicate &body body) "Create a standard while loop" ... )
+.BL
+(defmacro defprogram (name command key properties &key rat) "macro that sets up a program like use-package in emacs" ... )
+.BL
+(defmacro vv-set-color (val color) "Similar to `set-any-color', but without updating colors." ... )
+.BL
+(defmacro with-new-window ((window cmd &key properties (timeout 30)) &body body)
+  "Execute command, on next new window matching properties, run the body.  If no properties given, next new window will be acted on. By default, code will run in *focus-window-hook* handler, but can also run in *new-window-hook* handler by using keyword :new.  Return to focus hook with :focus." ... )
+.SH FUNCTIONS
+.BL
+(defun my-debug (&rest data) ... )
+.BL
+(defun if-file-exists (function file) ... )
+.BL
+(defun file-exists-p (file-name) "Check if the FILE-NAME exists." ... )
+.BL
+(defun probe-file-env-paths (name) "Probe file across paths in $PATH.  Returns first pathname found or nil." ... )
+.BL
+(defun window-cls-present-p (win-cls &optional all-groups) "Tell if a window (by class) is present" ... )
+.BL
+(defun run-or-raise-prefer-group (cmd win-cls) "If there are windows in the same class, cycle in those. Otherwise call run-or-raise with group search t." ... )
+.BL
+(defun run-or-raise-prefer-title (cmd win-cls) "If there are windows in the same title, cycle in those. Otherwise call run-or-raise with group search t." ... )
+.BL
+(defun shift-windows-forward (frames win) "Exchange windows through cycling frames." ... )
+.BL
+(defun global (key value) ... )
+.BL
+(defun cat (&rest strings) ... )
+.BL
+(defun colour (key) ... )
+.BL
+(defun read-file (file) "Open FILE and read the stream." ... )
+.BL
+(defun update-mode-line () "Update the mode-line sooner than usual." ... )
+.BL
+(defun rofi (mode) "Setup rofi command string with the specified MODE." ... )
+.BL
+(defun color-ping (s) ... )
+.BL
+(defun read-net (device-name) "Read the IP address for DEVICE-NAME." ... )
+.BL
+(defun ip-to-string (ip) "Takes a list which has the ip address." ... )
+.BL
+(defun get-interface () "Return all available network interfaces by name in list form." ... )
+.BL
+(defun save-hash-table-to-file (ht filename) "Save a hash table HT to a FILENAME." ... )
+.BL
+(defun read-hash-table-from-file (filename) "Read a hash table from a FILENAME." ... )
+.BL
+(defun redirect-debug (file) "Redirect *debug-stream* directly to a file." ... )
+.BL
+(defun maximize-window (win) "Maximize the window." ... )
+.BL
+(defun reset-all-windows () "Reset the size for all tiled windows" ... )
+.BL
+(defun select-random-bg-image () "Select a random image from *background-image-path* and display it on the root window. This is a rewrite of another function to check for errors and allow more than one picture type, as display command will only display valid files anyway." ... )
+.BL
+(defun print-list (the-list) "Prints the-list." ... )
+.BL
+(defun p (the-thing) "Shortcut for print" (print the-thing))
+.BL
+(defun pl (the-list) "Shortcut for print-list" (print-list the-list))
+.BL
+(defun env () "Shortcut for environment" (sb-ext:posix-environ))
+.BL
+(defun cwd () "Shortcut for Current Working Directory." (print *default-pathname-defaults*))
+.BL
+(defun fp (the-name) "shorcut for find package THE-NAME of the package." (find-package the-name))
+.SH COMMANDS
+.BL
+(defcommand gaps () () "Toggle the padding of tiled windows" ... )
+.BL
+(defcommand start-swank-server () () "Start the swank server." ... )
+.BL
+(defcommand start-swm-gaps () () "Start StumpWM Gaps" ... )
+.BL
+(defcommand start-modeline () () "Start StumpWM Modeline" ... )
+.BL
+(defcommand start-which-key () () "Start Which key Mode" ... )
+.BL
+(defcommand swank (&optional port) () "Start a swank server" ... )
+.BL
+(defcommand showlog (logfile) ((:string "Logfile: ")) "Show log" ... )
+.BL
+(defcommand logmenu () () "Display menu with log files" ... )
+.BL
+(defcommand colon1 (&optional (initial "")) (:rest) "Prompt the user for an interactive command. The first arg is an optional initial contents." ... )
+.BL
+(defcommand load-rez () () "Load Xresources." ... )
+.BL
+(defcommand reset-xcursor () () "Reset the xursor from lightDM." ... )
+.BL
+(defcommand set-display-size () () "Sets the Default screen size to 1920x1080." ... ) 
+.BL
+(defcommand set-polkit () () "Set gnome authentication agent." ... )
+.BL
+(defcommand set-desktop-picture-full-screen () () "Set the Desktop picture to full screen." ... )
+.BL
+(defcommand kill-compton-and-flashfocus () () "Kills compton and flash focus." ... )
+.BL
+(defcommand start-compton () () "Startup Compton with config" ... )
+.BL
+(defcommand start-flashfocus () () "Startup Flashfocus with config" ... )
+.BL
+(defcommand emacs-client (&optional (item *home*)) () "Startup emacsclient in a frame." ... )
+.BL
+(defcommand emacs-projects () () "Open Projects directory." ... )
+.BL
+(defcommand emacs-quicklisp () () "Open Projects directory." ... )
+.BL
+(defcommand emacs-edit-config () () "Open emacs config." ... )
+.BL
+(defcommand emacs-edit-stump-config () () "Open emacs config." ... )
+.BL
+(defcommand emacs-entry (item) ((:rest "Enter File Name Or Directory: ")) "Interactively enter a file name or path for emacs to open." ... )
+.BL
+(defcommand mount-device () () "List all mountable devices and perfoms a sudo mount" ... )
+.BL
+(defcommand ranger (&key (directory *home*) (s 0)) () "Startup ranger in user mode or super user mode. If S is 0 then you are in user mode, if S is 1 you are in Super User mode." ... )
+.BL
+(defcommand ranger-entry (d) ((:rest "Enter Directory: ")) "Interactively enter a directory to view." ... )
+.BL
+(defcommand ranger-sudo-entry (d) ((:rest "Enter Directory: ")) "Interactively enter a directory to view." ... )
+.BL
+(defcommand ranger-quicklisp () () "Startup ranger at quicklisp" ... )
+.BL
+(defcommand ranger-projects () () "Startup ranger at Projects" ... )
+.BL
+(defcommand ranger-stumpwm () () "Startup ranger at Stumpwm Configuration directory." ... )
+.BL
+(defcommand ranger-videos () () "Startup ranger at Videos" ... )
+.BL
+(defcommand dump-group-to-file (file) ((:rest "group to file: ")) "Dumps the frames of the current group of the current screen to the named file." ... )
+.BL
+(defcommand dump-screen-to-file (file) ((:rest "screen to file: ")) "Dumps the frames of all groups of the current screen to the named file." ... )
+.BL
+(defcommand dump-desktop-to-file (file) ((:rest "desktop to file: ")) "Dumps the frames of all groups of all screens to the named file." ... )
+.BL
+defcommand increase-volume () () "Increase the volume by 5%" ... )
+.BL
+defcommand decrease-volume () () "Decrease the volume by 5%" ... )
+.BL
+(defcommand mute () () "Mute/unmute the volume" ... )
+.BL
+(defcommand next-song () () "play the next song in playlist" ... )
+.BL
+(defcommand prev-song () () "play the previous song" ... )
+.BL
+(defcommand stop-song () () "stop the song" ... )
+.BL
+(defcommand play-song () () "plays/pauses the song" ... )
+.BL
+(defcommand pause-song () () "plays/pauses the song" ... )
+.BL
+(defcommand paste-x-selection () (:rest) "Universal rat-less X paste." ... )
+.BL
+(defcommand scratchpad () () "Create a scratchpad group for current screen, if not found, and toggle between the scatchpad group and the current group upon reissue of the same command." ... )
+.BL
+(defcommand quit-forget () () "Quit StumpWM without remembering current state." ... )
+.BL
+(defcommand manpage (command) ((:rest "manpage: ")) "Opens a man run" ... )
+.BL
+(defcommand uaml () () "Update the mode-line." ... )
+.BL
+(defcommand new-shell-script () () "Open or create a new shell script." ... )
+.BL
+(defcommand cmus () () "Raise or rum cmus Music Player" ... )
+.BL
+(defcommand app-menu () () "Run Rofi drum app menu." ... )
+.BL
+(defcommand run-firefox () () "Run Firefox" ... )
+.BL
+(defcommand window-menu () () "Run Rofi Window list menu." ... )
+.BL
+(defcommand rofi-bang () () "run rofi bang script which includes apps, windows, bookmarks, kill-app, move here, and power." ... )
+.BL
+(defcommand firefox () () "Run firefox with specific web address." ... )
+.BL
+(defcommand secure-shell () () "Create a ssh connection to a remote host." ... )
+.BL
+(defcommand stumpish-term () () "Create a stumpish terminal." ... )
+.BL
+(defcommand geary-email () () "Geary email browser for gmail." ... )
+.BL
+(defcommand rofi-all-windows () () "Show all open applications." ... )
+.BL
+(defcommand rofi-window-current-group () () "Show all open applications in Current Desktop." ... )
+.BL
+(defcommand rofi-theme-selector () () "Change Rofi Theme." ... )
+.BL
+(defcommand refresh-stuff () () "Refresh the mode line." ... )
+.BL
+(defcommand software-manager () () "Install software." ... )
+.BL
+(defcommand software-updater () () "Update software." ... )
+.BL
+(defcommand rotate-windows () () "Rotate all windows within a group to the master frame." ... )r
+.BL
+(defcommand windows-left-right () () "Open windows side by side" ... )
+.BL
+(defcommand windows-up-down () () "Open windows up and down" ... )
+.BL
+(defcommand iftop () () "Open IFTOP, to monitor network traffic." ... )
+.BL
+(defcommand glances () () "Open Glances, to monitor system and processes." ... )
+.BL
+(defcommand go-group (n) ((:number "Go to group: ")) "Go to selected group, or back to last used one" ... )
+.BL
+(defcommand toggle-split () () "Toggle horizontal/vertical split" ... )
+.BL
+(defcommand swap-windows (&optional (frame (tile-group-current-frame (current-group)))) () "Swap to windows. Invoke once to tag, twice to switch selected window with tagged one" ... )
+.BL
+(defcommand urxvt () () "Start an urxvt instance or switch to it, if it is already running." ... )
+.BL
+(defcommand rxvt-quake () () "Toggle rxvt-quake window." ... )
+.BL
+(defcommand echo-colors-brief () () "Output a brief list of currently defined colors." ... )
+.BL
+(defcommand fullscreen-with-modeline () () "fake version of fullscreen that retains border and mode-line" ... )
+.BL
+(defcommand fix-height () () "Resize the current frame height so that the current window's sides are touching the frame sides if the current window is of fixed proportions (e.g. mplayer)" ... )
+.BL
+(defcommand fix-width () () "Resize the current frame width so that the current window's sides are touching the frame sides if the current window is of fixed proportions (e.g. mplayer)" ... )
+.BL
+(defcommand gmove-and-follow (to-group) ((:group "To Group: ")) "Move the current window to the specified group and go there." ... )
+.BL
+(defcommand run-shell-command (cmd &optional collect-output-p) ((:shell "Execute: ")) "Run the specified shell command. If @var{collect-output-p} is @code{T} then run the command synchronously and collect the output." ... )
+.BL
+(defcommand set-performance () () "Set all cores to max speed." ... )
+.BL
+(defcommand set-powersave () () "Set all cores to power save speed." ... )
+.BL
+(defcommand resize-gaps (the-size) ((:number "Enter Number: ")) "Resize gaps around windows interactively using hjkl or arrow keys." ... )
+.SH FILES
+~/.stumpwm.d/
+.br
+~/.stumpwm.d/init.lisp
+.br
+~/.stumpwm.d/functions.lisp
+.br
+~/.stumpwm.d/macros.lisp
+.br
+~/.stumpwm.d/commands.lisp
+.br
+~/.stumpwm.d/constants.lisp
+.br
+~/.stumpwm.d/key-map.lisp
+.br
+~/.stumpwm.d/log.lisp.lisp
+.br
+~/.stumpwm.d/mode-line.lisp
+.br
+~/.stumpwm.d/scratchpad.lisp
+.br
+~/.stumpwm.d/shifting.lisp
+.br
+~/.stumpwm.d/starup.lisp
+.br
+~/.stumpwm.d/swap-window.lisp
+.br
+~/.stumpwm.d/themes.lisp
+.br
+~/.stumpwm.d/vi-keys.lisp
+.br
+~/.stumpwm.d/visual.lisp
+.br
+~/.stumpwm.d/web-jump.lisp
+.br
+~/.stumpwm.d/window.lisp
+.SH "SEE ALSO"
+info stumpwm
+.SH BUGS
+Holy shit its buggy as FUCK.
+.SH AUTHOR
+Vincent Vetsch <vincent.vetsch@gmail.com>
+.SH HISTORY
+.PP
+28 OCT 2018 -- First Semi-stable useable configuration.  Still seems to have some buffer overflows causing the window manager and desktop environment quit after two or three days of continuous operation (State Alpha).
+.PP
+31 Oct 2018 -- Basic Documentation added (State Alpha).
+.PP
+07 Nov 2018 -- Created a command to resize gaps.
+.SH TODO
+.PP
+Create a command to resize gaps with "hjkl" keys.
+.PP
+Create a command to open ~/.stumpwm.d/ directory.
+.PP
+Create a theming engine that puts color and fonts into Xreasorces, GTK and Qt config files.
+.PP
+/home/vince/.stumpwm.d/init.lisp:34:;; TODO - Create a load loop
+.PP
+/home/vince/.stumpwm.d/web-jump.lisp:3:;; TODO - Make into a package and add more functioanlity.
+.PP
+/home/vince/.stumpwm.d/web-jump.lisp:4:;; TODO - Make a man page for the package
+.PP
+/home/vince/.stumpwm.d/commands.lisp:200:  ;; TODO - Add rofi search
+.SH COMMANDS
+groff -Tps -mandoc file.1 > file.1.ps
+.br
+groff -Tpdf -mandoc my-stumpwm-man.1 > my-config.pdf
