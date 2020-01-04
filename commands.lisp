@@ -82,22 +82,27 @@
     ("Date and Time" "echo-date")
     ("Quit" "quit")) "Menu items for the quickslot menu")
 
-(defparameter *window-menu*
-  '((
+(defparameter *window-menu-items*
+  '(("Window Properties" "list-window-properties")
+    ("Window List for Group" "windowlist")
+    ("Window List for All" "windowlist-all")
+    ("Kill Fucused Window" "kill")
+     )
+    "Menu items for window actions")
 
-     )) "Menu items for window actions")
-
-(defparameter *frame-menu*
+(defparameter *frame-menu-items*
   '(("Resize Frame" "iresize")
     ("New Vertical Split" "vsplit")
     ("New Horizontal Split" "hsplit")
+    ("Remove Frame" "remove"))
+  "Menu items for frame actions")
 
-     ) "Menu items for frame actions")
+(defparameter *group-menu-items*
+  '(("New Group" "gnewbg")
+    ("Previous Group" "gother")
+    ("Kill Current Group" "gkill")
 
-(defparameter *group-menu*
-  '((
-
-     )) "Menu items for group actions")
+    ) "Menu items for group actions")
 
 ;; Define Commands
 (defcommand start-swank-server () () "Start the swank server."
@@ -163,13 +168,13 @@
                 (run-commands (format nil "showlog ~A" choice)))))
 
 (defcommand window-menu () () ""
-	    (menu-cmd *window-menu*))
+	    (menu-cmd *window-menu-items*))
 
 (defcommand frame-menu () () ""
-	    (menu-cmd *frame-menu*))
+	    (menu-cmd *frame-menu-items*))
 
 (defcommand group-menu () () ""
-	    (menu-cmd *group-menu*))
+	    (menu-cmd *group-menu-items*))
 
 (defcommand quickslot () () "A Menu for Commonly used commands and opening configuration files"
 	    (menu-cmd *quick-slot-menu*))
@@ -360,7 +365,7 @@
 (defcommand run-firefox () () "Run Firefox"
 	(run-or-raise-prefer-title "firefox" "Firefox"))
 
-(defcommand window-menu () () "Run Rofi Window list menu."
+(defcommand rofi-window-menu () () "Run Rofi Window list menu."
 	    (run-shell-command "exec rofi -threads 0 -show-icons -modi window -show"))
 
 (defcommand rofi-bang () () "Run Rofi Bang script which includes Apps, Windows, Bookmarks, Kill-App, Move Here, and Power."

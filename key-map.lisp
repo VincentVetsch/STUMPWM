@@ -44,6 +44,8 @@
 (define-key *top-map* (kbd "s-q") "logmenu")
 (Define-key *top-map* (kbd "s-t") "quickslot")
 (define-key *top-map* (kbd "s-f") "frame-menu")
+(define-key *top-map* (kbd "s-W") "window-menu")
+(define-key *top-map* (kbd "s-g") "group-menu")
 (define-key *top-map* (kbd "s-v") "vsplit")
 (define-key *top-map* (kbd "s-V") "hsplit")
 (define-key *top-map* (kbd "s-r") "rotate-windows")
@@ -56,6 +58,8 @@
 (define-key *top-map* (kbd "s-M-Down") "move-window down")
 (define-key *top-map* (kbd "s-M-Left") "move-window left")
 (define-key *top-map* (kbd "s-M-Right") "move-window right")
+(define-key *top-map* (kbd "s-C-Left") "gprev")
+(define-key *top-map* (kbd "s-C-Right") "gnext")
 
 (define-key *top-map* (kbd "s-F1") "gselect 1")
 (define-key *top-map* (kbd "s-F2") "gselect 2")
