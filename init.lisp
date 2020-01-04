@@ -59,7 +59,7 @@
       ;*input-completion-type* :fuzzy
       *message-window-padding* 40
       *message-window-y-padding* 5
-      *mouse-focus-policy* :sloppy
+      *mouse-focus-policy* :click
       *message-window-gravity* :top ;;:center
       *input-window-gravity* :top ;;:center
       *transient-gravity* :top
@@ -116,7 +116,7 @@
 
 (define-frame-preference "WWW"
     (1 t t :restore "firefox-dump" :class "Firefox")
-    ( 0 t t :create "Firefox-dump" :class "Firefox")
+    (0 t t :create "Firefox-dump" :class "Firefox")
     (0 t nil :class "Firefox"))
 
 (define-frame-preference "Shareland"

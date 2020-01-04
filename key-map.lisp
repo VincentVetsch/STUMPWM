@@ -43,6 +43,7 @@
 (define-key *top-map* (kbd "s-x") "stumpish-term")
 (define-key *top-map* (kbd "s-q") "logmenu")
 (Define-key *top-map* (kbd "s-t") "quickslot")
+(define-key *top-map* (kbd "s-f") "frame-menu")
 (define-key *top-map* (kbd "s-v") "vsplit")
 (define-key *top-map* (kbd "s-V") "hsplit")
 (define-key *top-map* (kbd "s-r") "rotate-windows")
