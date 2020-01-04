@@ -5,12 +5,13 @@
 (defvar *home* (getenv "HOME") "THe home directory")
 (defvar *gap-resize-increment* 1 "Number of pixels to increment by when interactively resizing gaps.")
 
-(defparameter *log-menu* '(("STUMP"
-                            ("stumpwm.log" "~var/log/stumpwm.log"))
-                           ("XORG"
-                            ("Xorg.0.log" "/var/log/Xorg.0.log"))
-                           ("Package Manager"
-                            ("pacman.log" "/var/log/pacman.log"))))
+(defparameter *log-menu*
+  '(("STUMP"
+     ("stumpwm.log" "~var/log/stumpwm.log"))
+    ("XORG"
+     ("Xorg.0.log" "/var/log/Xorg.0.log"))
+    ("Package Manager"
+     ("pacman.log" "/var/log/pacman.log"))))
 
 (defparameter *quick-slot-menu*
   '(("STUMP Window Manager"
@@ -87,8 +88,9 @@
     ("Window List for Group" "windowlist")
     ("Window List for All" "windowlist-all")
     ("Kill Fucused Window" "kill")
+    ("Only (Remove Other Frames)" "only")
      )
-    "Menu items for window actions")
+  "Menu items for window actions")
 
 (defparameter *frame-menu-items*
   '(("Resize Frame" "iresize")
@@ -124,11 +126,16 @@
 		  (message "StumpWM Gaps Started."))
 		(message "StumpWM Gaps Already Running.")))
 
+(defcommand get-cpu-speed (title) () "Get current Speed of CPU"
+	    (my-message title (format nil "~a" (run-shell-command "get-cpu-speed.bash" 1))))
+
 (defcommand set-performance () () "Set all cores to max speed."
-	    (run-shell-command "sudo cpupower frequency-set -g performance"))
+	    (run-shell-command "sudo cpupower frequency-set -g performance")
+	    (get-cpu-speed "Set Performance"))
 
 (defcommand set-powersave () () "Set all cores to power save speed."
-	    (run-shell-command "sudo cpupower frequency-set -g powersave"))
+	    (run-shell-command "sudo cpupower frequency-set -g powersave")
+	    (get-cpu-speed "Set Powersave"))
 
 (defcommand start-modeline () () "Start StumpWM Modeline"
 	    (unless (stumpwm::head-mode-line (current-head))
@@ -179,6 +186,13 @@
 (defcommand quickslot () () "A Menu for Commonly used commands and opening configuration files"
 	    (menu-cmd *quick-slot-menu*))
 
+(defcommand my-message (command-name text) () "For capturing messages from commands." 
+	    (let ((*message-window-gravity* :center)
+		  (*message-window-padding* 50)
+		  (*message-window-y-padding* 30)
+		  (*timeout-wait* 10))
+	      (message "^B^2 ~a: ^B^5 ~a" command-name text)))
+
 (defcommand menu-cmd (menu-items) () "Command for opening a menu in MENU-ITEMS"
             (labels 
               ((pick (options)
@@ -199,7 +213,8 @@
       (eval-command cmd t))))
 
 (defcommand load-rez () () "Load Xresources."
-	     (run-shell-command "xrdb ~/.Xresources"))
+	    (run-shell-command "xrdb ~/.Xresources")
+	    (my-message "Load Xresources" "Loaded Xresources file."))
 
 (defcommand reset-xcursor () () "Reset the xursor from lightDM."
 	     (run-shell-command "xsetroot -cursor_name left_ptr"))
@@ -313,11 +328,8 @@
   (let ((cmd (concatenate 'string "insert " (get-x-selection))))
      (eval-command cmd)))
 
-(defcommand scratchpad () () "Create a scratchpad group for current screen, if not found, and toggle between the scatchpad group and the current group upon reissue of the same command."
-  (let* ((sg (find-group (current-screen) *scratchpad-group-name*)) (cg (current-group)))
-    (if sg
-        (cond ((eq cg sg) (gother)) (t (switch-to-group sg) (message "scratchpad")))
-      (progn (gnew *scratchpad-group-name*) (message "scratchpad")))))
+(defcommand scratchpad-test () ()
+	    (scratchpad::scratchpad-float "My Term" "st -e ranger" :top))
 
 (defcommand quit-forget () () "Quit StumpWM without remembering current state."
   (with-open-file (stream *debug-file* :direction :io :if-exists :supersede))
@@ -331,7 +343,6 @@
   (throw :top-level :quit))
 
 (defcommand manpage (command) ((:rest "Man: ")) "Opens a man page"
-  ;; TODO - Add rofi search
   (run-shell-command (format nil "~a -e man ~a" *terminal* command)))
 
 (defcommand info-page (command) ((:rest "Info: ")) "Opens an info document"
@@ -424,6 +435,7 @@
 
 (defcommand gpart () () "Open Gnome Disks"
 	    (run-shell-command "gnome-disks"))
+
 (defcommand glances () () "Open Glances, to monitor system and processes."
 	    (run-shell-command (format nil "exec ~A -e glances" *terminal*)))
 
@@ -567,7 +579,3 @@
 		  (gaps)
 		  (gaps))
 		  (gaps)))
-
-(defcommand some-text (text) ()
-  "My useful command."
-  (message-no-timeout text))

@@ -8,6 +8,9 @@
 (ql:quickload :serapeum)
 (ql:quickload :alexandria)
 (ql:quickload :swank)
+(defpackage hfj
+  (:use :cl :stumpwm :anaphora))
+(in-package :hfj)
 
 (require :stumpwm)
 (in-package :stumpwm)
@@ -38,7 +41,8 @@
 (load "~/.stumpwm.d/functions.lisp")
 (load "~/.stumpwm.d/layout.lisp")
 (load "~/.stumpwm.d/window.lisp")
-;(load "~/.stumpwm.d/scratchpad.lisp")
+(load "~/.stumpwm.d/window1.lisp")
+(load "~/.stumpwm.d/scratchpad.lisp")
 (load "~/.stumpwm.d/visual.lisp")
 (load "~/.stumpwm.d/commands.lisp")
 (load "~/.stumpwm.d/mode-line.lisp")
@@ -57,8 +61,8 @@
       *shell-program* "/bin/sh"
       *suppress-frame-indicator* t
       ;*input-completion-type* :fuzzy
-      *message-window-padding* 40
-      *message-window-y-padding* 5
+      *message-window-padding* 20
+      *message-window-y-padding* 10
       *mouse-focus-policy* :click
       *message-window-gravity* :top ;;:center
       *input-window-gravity* :top ;;:center
