@@ -4,21 +4,30 @@
 (defvar *swap-selected-frame* nil "Swapping frames yeah!")
 (defvar *home* (getenv "HOME") "THe home directory")
 (defvar *gap-resize-increment* 1 "Number of pixels to increment by when interactively resizing gaps.")
+
 (defparameter *log-menu* '(("STUMP"
                             ("stumpwm.log" "~var/log/stumpwm.log"))
                            ("XORG"
                             ("Xorg.0.log" "/var/log/Xorg.0.log"))
                            ("Package Manager"
                             ("pacman.log" "/var/log/pacman.log"))))
+
 (defparameter *quick-slot-menu*
   '(("STUMP Window Manager"
+     ("Eval" "eval")
      ("Describe Function" "describe-function")
      ("Describe Command" "describe-command")
      ("Describle Variable" "describe-variable")
      ("Describle Key" "describe-key")
      ("List Commands" "commands")
+     ("Save Layout"
+      ("Save Desktop""dump-desktop-to-file")
+      ("Save Group" "dump-group-to-file")
+      ("Save Screen" "dump-screen-to-file"))
+     ("Load Layout" "restore-from-file")
      ("Reload Configuration" "loadrc")
      ("Stumpish" "stumpish-term")
+     ("Full Screen With Modeline" "fullscreen-with-modeline")
      ("Resize Frame" "iresize"))
     ("EMACS"
      ("Open Stump Configuration Directory" "emacs-edit-stumpwm-config")
@@ -40,6 +49,10 @@
      ("LX Music" "lxmusic"))
     ("Net Tools"
      ("Label" "Command"))
+    ("Documentation"
+     ("Man Page" "manpage")
+     ("My StumpWM Config" "my-config-manual")
+     ("Info Page" "info-page"))
     ("System Tools"
      ("Open Simple Terminal (st)" "st")
      ("Open Root Simple Terminal (st)" "su-st")
@@ -49,6 +62,7 @@
      ("Open IFTOP" "iftop")
      ("Open LX Apperance" "lxlook")
      ("Open Glances" "glances")
+     ("Open File Manager" "pcmanfm")
      ("Open XFCE-Taskmanager" "xfce-task")
      ("Opne Gnome Disks" "gpart"))
     ("Web"
@@ -64,7 +78,26 @@
      ("King James Bible" "kjv")
      ("OSHA" "osha")
      ("Dotshare" "dotshare")
-     ("Google" "google"))) "Menu items for the quickslot menu")
+     ("Google" "google"))
+    ("Date and Time" "echo-date")
+    ("Quit" "quit")) "Menu items for the quickslot menu")
+
+(defparameter *window-menu*
+  '((
+
+     )) "Menu items for window actions")
+
+(defparameter *frame-menu*
+  '(("Resize Frame" "iresize")
+    ("New Vertical Split" "vsplit")
+    ("New Horizontal Split" "hsplit")
+
+     ) "Menu items for frame actions")
+
+(defparameter *group-menu*
+  '((
+
+     )) "Menu items for group actions")
 
 ;; Define Commands
 (defcommand start-swank-server () () "Start the swank server."
@@ -129,7 +162,19 @@
               (let ((choice (pick *log-menu*)))
                 (run-commands (format nil "showlog ~A" choice)))))
 
+(defcommand window-menu () () ""
+	    (menu-cmd *window-menu*))
+
+(defcommand frame-menu () () ""
+	    (menu-cmd *frame-menu*))
+
+(defcommand group-menu () () ""
+	    (menu-cmd *group-menu*))
+
 (defcommand quickslot () () "A Menu for Commonly used commands and opening configuration files"
+	    (menu-cmd *quick-slot-menu*))
+
+(defcommand menu-cmd (menu-items) () "Command for opening a menu in MENU-ITEMS"
             (labels 
               ((pick (options)
                      (let ((selection (select-from-menu (current-screen) options "")))
@@ -140,7 +185,7 @@
                           (second selection))
                          (t
                            (pick (cdr selection)))))))
-              (let ((choice (pick *quick-slot-menu*)))
+              (let ((choice (pick menu-items)))
                 (run-commands choice))))
 
 (defcommand colon1 (&optional (initial "")) (:rest) "Prompt the user for an interactive command. The first arg is an optional initial contents."
@@ -280,9 +325,16 @@
                       (current-group))))))
   (throw :top-level :quit))
 
-(defcommand manpage (command) ((:rest "manpage: ")) "Opens a man run"
+(defcommand manpage (command) ((:rest "Man: ")) "Opens a man page"
   ;; TODO - Add rofi search
   (run-shell-command (format nil "~a -e man ~a" *terminal* command)))
+
+(defcommand info-page (command) ((:rest "Info: ")) "Opens an info document"
+  ;; TODO - Add rofi search:
+  (run-shell-command (format nil "~a -e info ~a" *terminal* command)))
+
+(defcommand my-config-manual () () "Opens my config manual page"
+	    (run-shell-command (format nil "~a -e man -l ~a" *terminal* "~/.stumpwm.d/stumpwm-config.1")))
 
 (defcommand uaml () () "Update the mode-line."
   (update-all-mode-lines))
@@ -296,8 +348,11 @@
 (defcommand lxmusic () () "Run or raise LXMusic Player"
 	    (run-or-raise-prefer-title "lxmusic" "LXMusic..."))
 
+(defcommand pcmanfm () () "Run File Manager"
+	    (run-or-raise-prefer-title "pcmanfm" "Title"))
+
 (defcommand lxlook () () "Run or raise LX Apperance"
-	    (run-or-raise-prefer-title "lxapperamce" "Customize Look and Feel"))
+	    (run-or-raise-prefer-title "lxappearance" "Customize Look and Feel"))
 
 (defcommand app-menu () () "Run Rofi drum app menu."
 	    (run-shell-command "exec rofi -threads 0 -show-icons -modi drun -show"))
@@ -324,7 +379,7 @@
 	    (run-or-raise-prefer-title "geary" "Geary"))
 
 (defcommand xfce-task () () "Open XFCE4-Taskmanager"
-	    (run-or-raise-prefer-title "xfce4-taskmamager" "Task Manager"))
+	    (run-or-raise-prefer-title "xfce4-taskmanager" "Task Manager"))
 
 (defcommand rofi-all-windows () () "Show all open applications." (rofi "window"))
 
