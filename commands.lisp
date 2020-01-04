@@ -100,10 +100,14 @@
   "Menu items for frame actions")
 
 (defparameter *group-menu-items*
-  '(("New Group" "gnewbg")
+  '(("Group List" "grouplist")
+    ("New Group" "gnewbg")
     ("Previous Group" "gother")
+    ("Rename Group" "grename")
     ("Kill Current Group" "gkill")
-
+    ("Next Group with Window" "gnext-with-window")
+    ("Previous Group with Window" "gprev-with-window")
+    ("Move Window to Selected Group" "gmove")
     ) "Menu items for group actions")
 
 ;; Define Commands
