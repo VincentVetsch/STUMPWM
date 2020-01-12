@@ -2,6 +2,9 @@
 (ql:quickload :str)
 (ql:quickload :ip-interfaces)
 (ql:quickload :clx)
+;(ql:quickload :mcclim)
+(ql:quickload :ltk)
+(ql:quickload :cl-cffi-gtk)
 ;;(declaim (optimize (speeed 3) (safety 1)))
 
 
@@ -30,8 +33,52 @@
                                                   '(#\Newline)
                                                   (read-line stream)))))
     output-string))
-(defun show (obj)
-  "Use typecase for showing type of OBJ."
+
+
+
+(defun ltk-test-1 () "Test app for ltk"
+       (ltk:with-ltk ()
+	 (let ((button-1 (make-instance 'ltk:button
+					:master NIL
+					:text "Push Me"
+					:command (lambda () (format t "Hello World~&")))))
+	   (ltk:pack button-1))))
+
+(defun ltk-test-2 () "Test app for ltk"
+       (ltk:with-ltk ()
+	 (ltk:wm-title ltk:*tk* "GUI Test")
+	 (ltk:maxsize ltk:*tk* 320 240)
+	 (let* (
+		(frame-1 (make-instance 'ltk:frame))
+		(button-1 (make-instance 'ltk:button
+					:master frame-1
+					:text "Button 1"
+					:command (lambda () (format t "Hi from Button 1~&"))))
+	       (button-2 (make-instance 'ltk:button
+					:master frame-1
+					:text "Exit"
+					:command (lambda ()
+						 ;(ltk:do-msg "Bye!" "Hello World!")
+						 (setf ltk:*exit-mainloop* t)
+						 (format t "Hi From Button 2~&")))))
+	   (ltk:pack frame-1 :side :bottom :padx 1 :pady 1 :fill :both )
+	   (ltk:pack button-1 :side :left :padx 4 :pady 2)
+	   (ltk:pack button-2 :side :right :padx 4 :pady 2)
+	   (ltk:configure frame-1 :borderwidth 1)
+	   ;(ltk:configure button-1 :highlightcolor :black)
+	   (ltk:configure frame-1 :relief :groove)
+	 )))
+(defun ltk-test-3 () ""
+  (ltk:with-ltk ()
+    (let (
+	  (f (make-instance 'ltk:toplevel)))
+      ;(ltk:withdraw ltk:toplevel)
+      (ltk:wm-title f "LTK Test App")
+      (ltk:resizable f 0 0)
+      ;(ltk:deiconify f))
+    )))
+
+(defun show (obj) "Use typecase for showing type of OBJ."
   (typecase obj
     (integer "An Integer")
     (float "A Float")

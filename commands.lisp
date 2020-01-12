@@ -38,6 +38,8 @@
      ("Open Emacs Configuration" "emacs-edit-config")
      ("Open a File in EMACS" "emacs-entry")
      ("Open Devices Directory" "emacs-devices"))
+    ("Programming"
+     ("Open McClim" "mtest"))
     ("Display Manager"
      ("Set Random Desktop Image" "set-desktop-picture-full-screen")
      ("Load Xresources" "load-rez")
@@ -88,8 +90,7 @@
     ("Window List for Group" "windowlist")
     ("Window List for All" "windowlist-all")
     ("Kill Fucused Window" "kill")
-    ("Only (Remove Other Frames)" "only")
-     )
+    ("Only (Remove Other Frames)" "only"))
   "Menu items for window actions")
 
 (defparameter *frame-menu-items*
@@ -108,7 +109,8 @@
     ("Next Group with Window" "gnext-with-window")
     ("Previous Group with Window" "gprev-with-window")
     ("Move Window to Selected Group" "gmove")
-    ) "Menu items for group actions")
+    ("Move Window to Selected Group and Follow" "gmove-and-follow"))
+  "Menu items for group actions")
 
 ;; Define Commands
 (defcommand start-swank-server () () "Start the swank server."
@@ -119,16 +121,16 @@
 		  (swank:create-server :port 4004
 				       :style swank:*communication-style*
 				       :dont-close t)
-		  (message "Swank Server Started"))
-		(message "Swank server is Already Running")))
+		  (my-message "Swank Server" "Swank Server Started"))
+		(my-message "Swank Server" "Swank server is Already Running")))
 
 (defcommand start-swm-gaps () () "Start StumpWM Gaps"
 	    (if (= *swm-gaps-on* 0)
 		(progn
 		  (setf *swm-gaps-on* 1)
 		  (swm-gaps:toggle-gaps)
-		  (message "StumpWM Gaps Started."))
-		(message "StumpWM Gaps Already Running.")))
+		  (my-message "Start Gqps" "StumpWM Gaps Started."))
+		(my-message "Start Gqps" "StumpWM Gaps Already Running.")))
 
 (defcommand get-cpu-speed (title) () "Get current Speed of CPU"
 	    (my-message title (format nil "~a" (run-shell-command "get-cpu-speed.bash" 1))))
@@ -150,8 +152,8 @@
 		(progn
 		  (setf *which-key-on* 1)
 		  (which-key-mode)
-		  (message "Which Key Mode Started."))
-		(message "Which Key Mode Alreedy Running.")))
+		  (my-message "Start Which Key" "Which Key Mode Started."))
+		(message "Start Which Key" "Which Key Mode Alreedy Running.")))
 
 (defcommand swank (&optional port) () "Start a swank server"
   (setf stumpwm:*top-level-error-action* :break)
@@ -159,7 +161,7 @@
 		       :coding-system "utf-8"
 		       :style swank:*communication-style*
 		       :dont-close t)
-  (message "Starting swank"))
+  (my-message "Swank" "Starting swank"))
 
 (defcommand showlog (logfile) ((:string "Logfile: ")) "Show log"
             (run-shell-command (format nil "~A -e tail -f ~A" *terminal* logfile)))
@@ -167,7 +169,7 @@
 (defcommand logmenu () () "Display menu with log files"
             (labels 
               ((pick (options)
-                     (let ((selection (select-from-menu (current-screen) options "")))
+		 (let ((selection (select-from-menu (current-screen) options "")))
                        (cond
                          ((null selection)
                           (throw 'error "Abort"))
@@ -177,6 +179,12 @@
                            (pick (cdr selection)))))))
               (let ((choice (pick *log-menu*)))
                 (run-commands (format nil "showlog ~A" choice)))))
+
+(defcommand mtest () () "Test Mcclim"
+	    (mclim-test))
+
+(defcommand get-unmounted-usb-devices () () ""
+	    )
 
 (defcommand window-menu () () ""
 	    (menu-cmd *window-menu-items*))
@@ -221,7 +229,8 @@
 	    (my-message "Load Xresources" "Loaded Xresources file."))
 
 (defcommand reset-xcursor () () "Reset the xursor from lightDM."
-	     (run-shell-command "xsetroot -cursor_name left_ptr"))
+	    (run-shell-command "xsetroot -cursor_name left_ptr")
+	    (my-message "Reset Xcursor" "Reset the cursor"))
 
 (defcommand set-display-size () () "Sets the Default screen size to 1920x1080."
 	     (run-shell-command "~/.screenlayout/default.sh"))
@@ -267,6 +276,9 @@
 
 (defcommand emacs-entry (item) ((:rest "Enter File Name Or Directory: ")) "Interactively enter a file name or path for emacs to open."
 	    (emacs-client item))
+
+(defcommand open-file-in-emacs () () "Open file in Emacs with gtk file chooser dialog"
+	    (gtk-ui:file-chooser-dialog #'emacs-client "Open file with Emacs"))
 
 (defcommand mount-device () () "List all mountable devices and perfoms a sudo mount"
 	    (run-shell-command "test-mount.sh"))

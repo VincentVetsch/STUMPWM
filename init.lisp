@@ -39,6 +39,7 @@
 (load "~/.stumpwm.d/startup.lisp")
 (load "~/.stumpwm.d/macros.lisp")
 (load "~/.stumpwm.d/functions.lisp")
+(load "~/.stumpwm.d/gtk-ui.lisp")
 (load "~/.stumpwm.d/layout.lisp")
 (load "~/.stumpwm.d/window.lisp")
 (load "~/.stumpwm.d/window1.lisp")
@@ -130,3 +131,5 @@
 (define-frame-preference "Emacs"
   (1 t t :restore "emacs-editing-dump" :title "...xdvi")
   (0 t t :create "emacs-dump" :class "Emacs"))
+
+(load "~/.stumpwm.d/unstable.lisp")
